@@ -1,13 +1,12 @@
 use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
-use std::cell::RefCell;
 use std::collections::VecDeque;
 
 
 struct Node {
     name: String,
-    enodes: RefCell<Vec<usize>>,
+    enodes: Vec<usize>,
     checked: bool,
     parent: usize,
 }
@@ -43,25 +42,26 @@ impl Graph {
             let mut aind = graph.search_node(s[0]);
 
             if aind == <usize>::max_value() {
-                graph.nodes.push(Node { name: s[0].to_string(), enodes: RefCell::new(vec![]), checked: false, parent: <usize>::max_value() });
+                graph.nodes.push(Node { name: s[0].to_string(), enodes:vec![], checked: false, parent: <usize>::max_value() });
                 aind = graph.nodes.len() - 1
             }
 
             let mut mind = graph.search_node(s[1]);
 
-
             if mind == <usize>::max_value() {
-                graph.nodes.push(Node { name: s[1].to_string(), enodes: RefCell::new(vec![]), checked: false, parent: <usize>::max_value() });
-                graph.nodes[graph.nodes.len() - 1].enodes.borrow_mut().push(aind);
+                graph.nodes.push(Node { name: s[1].to_string(), enodes: vec![], checked: false, parent: <usize>::max_value() });
+                let len=graph.nodes.len() - 1;
+                graph.nodes[len].enodes.push(aind);
                 mind = graph.nodes.len() - 1
             } else {
-                graph.nodes[mind].enodes.borrow_mut().push(aind);
+                graph.nodes[mind].enodes.push(aind);
             }
 
             if aind == <usize>::max_value() {
-                graph.nodes[graph.nodes.len() - 1].enodes.borrow_mut().push(mind);
+                let len=graph.nodes.len() - 1;
+                graph.nodes[len].enodes.push(mind);
             } else {
-                graph.nodes[aind].enodes.borrow_mut().push(mind);
+                graph.nodes[aind].enodes.push(mind);
             }
         }
         println!("end init");
@@ -89,10 +89,10 @@ impl Graph {
                 break;
             }
 
-            let len = self.nodes[icurrent].enodes.borrow_mut().len() - 1;
+            let len = self.nodes[icurrent].enodes.len() - 1;
 
             for i in 0..len {
-                let  inode = self.nodes[icurrent].enodes.borrow_mut()[i];
+                let  inode = self.nodes[icurrent].enodes[i];
                 if !self.nodes[inode].checked {
                     self.nodes[inode].checked = true;
                     self.nodes[inode].parent = icurrent;
@@ -128,8 +128,3 @@ fn main() {
     let mut graph = Graph::init("data/movies-demo.csv");
     graph.search("Martin Sheen", "Elarica Gallacher");
 }
-
-
-
-
-
