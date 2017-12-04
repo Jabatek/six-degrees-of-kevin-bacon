@@ -1,0 +1,6 @@
+[package]
+name = "six-degrees-of-kevin-bacon"
+version = "0.1.0"
+authors = ["x"]
+
+[dependencies]
